@@ -8,18 +8,15 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 
-# Dataset path
 base_dir = "dataset"
 
 train_dir = os.path.join(base_dir, "train")
 val_dir = os.path.join(base_dir, "val")
 test_dir = os.path.join(base_dir, "test")
 
-# Settings
 IMG_SIZE = 150
-BATCH_SIZE = 16   # smaller = safer for your GPU
+BATCH_SIZE = 16
 
-# Data generators
 train_datagen = ImageDataGenerator(
     rescale=1./255,
     zoom_range=0.2,
@@ -43,7 +40,6 @@ val_data = val_datagen.flow_from_directory(
     class_mode='binary'
 )
 
-# Build CNN
 model = Sequential()
 
 model.add(Conv2D(32, (3,3), activation='relu', input_shape=(IMG_SIZE, IMG_SIZE, 3)))
@@ -62,28 +58,24 @@ model.add(Dropout(0.5))
 
 model.add(Dense(1, activation='sigmoid'))
 
-# Compile
 model.compile(
     optimizer='adam',
     loss='binary_crossentropy',
     metrics=['accuracy']
 )
 
-# Train
 history = model.fit(
     train_data,
     validation_data=val_data,
     epochs=5
 )
 
-# Plot accuracy
 plt.plot(history.history['accuracy'], label='Train Accuracy')
 plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
 plt.legend()
 plt.title("Accuracy Graph")
 plt.show()
 
-# Test
 test_data = val_datagen.flow_from_directory(
     test_dir,
     target_size=(IMG_SIZE, IMG_SIZE),
@@ -93,3 +85,33 @@ test_data = val_datagen.flow_from_directory(
 
 loss, acc = model.evaluate(test_data)
 print("Test Accuracy:", acc)
+
+model.save("pneumonia_cnn_model.h5")
+print("Model saved as pneumonia_cnn_model.h5")
+
+# Plot loss
+plt.plot(history.history['loss'], label='Train Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.legend()
+plt.title("Loss Graph")
+plt.show()
+
+
+from tensorflow.keras.preprocessing import image
+
+def predict_image(img_path):
+    img = image.load_img(img_path, target_size=(IMG_SIZE, IMG_SIZE))
+    img_array = image.img_to_array(img) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+    
+    prediction = model.predict(img_array)
+    if prediction[0][0] > 0.5:
+        print(f"{img_path} --> PNEUMONIA")
+    else:
+        print(f"{img_path} --> NORMAL")
+
+        predict_image("dataset/test/PNEUMONIA/person1_bacteria_10.jpeg")
+        predict_image("dataset/test/NORMAL/person1_virus_1.jpeg")
+
+
+    
