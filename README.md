@@ -184,9 +184,12 @@ python main.py
 ## 💾 Output
 * 📊 Accuracy Graph
 
-* <img width="640" height="480" alt="Figure_1" src="https://github.com/user-attachments/assets/6d11c8a7-5f2e-4892-a053-22fbeb245303" />
+ <img width="640" height="480" alt="Figure_1" src="https://github.com/user-attachments/assets/6d11c8a7-5f2e-4892-a053-22fbeb245303" />
 
 * 📉 Loss Graph
+
+<img width="640" height="480" alt="Figure_2" src="https://github.com/user-attachments/assets/d526cee3-851f-469e-bca5-7e2870c9d5c2" />
+
 * 🧪 Test Accuracy (printed in terminal)
 * 💾 Saved Model file:
 
